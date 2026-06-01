@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Victorian Public Transport Accessibility</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/grids-responsive-min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+    
+    
+    <style>
+        #vg-tooltip-element { padding: 0px !important; border-radius: 2px !important; border: none !important; box-shadow: 2px 2px 8px rgba(0,0,0,0.15) !important; font-family: sans-serif; }
+        #vg-tooltip-element table { border-collapse: collapse; margin: 0; }
+        #vg-tooltip-element td { border: 2px solid #dcdde1 !important; padding: 8px 12px !important; font-size: 13px; }
+        #vg-tooltip-element td.key { color: #7f8c8d !important; text-align: right; font-weight: normal !important; }
+        #vg-tooltip-element td.value { color: #000 !important; font-weight: bold !important; }
+    </style>
+</head>
+<body>
+
+
+<div class="hero-header" style="padding: 40px 20px; box-sizing: border-box;">
+    
+   
+    <div style="margin-bottom: 40px;">
+        <h1 style="margin-bottom: 10px; font-size: 2.5em; color: #ffffff;">PUBLIC TRANSPORT ACCESSIBILITY AND COMMUTER DEMOGRAPHICS IN VICTORIA</h1>
+        <p style="font-size: 1.2em; color: #cbd5e1; margin-top: 0;"><strong>Created by Jeremy Liang</strong>  A data-driven look into how infrastructure shapes the way we move.</p>
+    </div>
+    
+ 
+    <div style="width: 100%; background-color: rgba(255, 255, 255, 0.08); padding: 30px 40px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.15); font-size: 1.05em; line-height: 1.6; color: #f1f5f9; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: justify; box-sizing: border-box;">
+        <strong>Introduction:</strong> As our state's population rapidly expands the intersection of infrastructure, geography, and commuter behavior has never been more critical. This dashboard presents the stark contrasts between the inner-city's robust, multi-modal transit networks and the sprawling, car-dependent realities of our outer-suburban growth corridors. By examining spatial accessibility, generational commuter habits and the lingering impacts of the pandemic on our transit chokepoints, we aim to uncover the systemic inequities and hidden "time penalties" built into our daily journeys. The data presented here goes beyond simple patronage statistics; it maps the geography of choice, highlighting the urgent need for decentralized, equitable infrastructure to build a more sustainable and connected future for all Victorians.
+    </div>
+   
+
+</div>
+
+<div class="pure-g" id="container">
+
+<div class="pure-u-1 section-container bg-light-blue">
+        <div class="pure-g"> <div class="pure-u-1 section-banner">
+                <h2>Section 1: The Macro Picture</h2>
+                <p>Mapping Victoria's Transit Veins and Population Density</p>
+            </div>
+
+            <div class="pure-u-1 pure-u-md-1-2" style="padding-right: 10px; box-sizing: border-box;">
+                <div class="chart-card">
+                    <h3 class="chart-card-title">Public Transport Density</h3>
+                    <p class="insight-text">While central municipalities are saturated with legacy transit infrastructure, outer suburbs show a stark lack of coverage.</p>
+                    <div class="vis-container" id="vis-map-density"></div>
+                </div>
+            </div>
+            
+            <div class="pure-u-1 pure-u-md-1-2" style="padding-left: 10px; box-sizing: border-box;">
+                <div class="chart-card">
+                    <h3 class="chart-card-title">Population Density (2025)</h3>
+                    <p class="insight-text">Population growth is fundamentally outpacing infrastructure development in growth corridors, setting the stage for commuter inequality.</p>
+                    <div class="vis-container" id="vis-map-population"></div>
+                </div>
+            </div>
+
+            <div class="pure-u-1" style="padding: 0 10px; box-sizing: border-box; margin-top: 10px;">
+                <div class="chart-card" style="height: auto;">
+                    <h3 class="chart-card-title">Key Insight: The Spatial Disconnect</h3>
+                    <p class="insight-text" style="margin-bottom: 0;">
+                        By comparing these two maps, a clear spatial disconnect emerges. On one side, we have the inner-city—rich in legacy infrastructure, boasting diverse, reliable, and frequent transit options. On the other side, we have the rapidly expanding outer-suburban growth corridors. Here, population growth has fundamentally outpaced infrastructure, forcing residents into heavy car reliance.
+The data proves that this spatial disconnect is more than just lines on a map; it represents a stark accessibility gap tied closely to geography and wealth. The network's core relies on massive chokepoints like Flinders Street to bear an incredible burden, while the outer edges remain fragile.
+                    </p>
+                </div>
+            </div>
+
+        </div> </div>
+
+
+    <div class="pure-u-1 section-container bg-soft-blue">
+        <div class="pure-g"> 
+
+
+            <div class="pure-u-1 section-banner">
+                <h2>Section 2: The Commuter Reality</h2>
+                <p>How the infrastructure gap translates to human behavior</p>
+            </div>
+
+
+            <div class="pure-u-1">
+                <div class="chart-card">
+                    <h3 class="chart-card-title">Statewide Commuter Breakdown</h3>
+                    <p class="insight-text">An overwhelming <strong>88% of commuters</strong> rely on private vehicles.</p>
+                    
+
+                <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; margin-top: 20px;">
+                    
+
+                    <div class="vis-container" id="vis-chart-waffle" style="width: 25%; justify-content: flex-start;"></div>
+                    
+
+                        <div style="width: 40%; padding: 0 15px; box-sizing: border-box;">
+                            <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px; font-size: 0.95em; line-height: 1.6; color: #475569; text-align: justify; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
+                                <p style="margin-top: 0;">When we translate the macro-level infrastructure maps into daily human behavior, the statewide reality of how Victorians commute becomes starkly apparent. This visualization breaks down a representative sample of one hundred average commuters across the state. The dominance of the orange squares tells an unmistakable story: despite billions of dollars invested in legacy rail networks and emerging transport corridors, Victoria remains overwhelmingly dependent on the automobile. A staggering <strong>88 percent</strong> of the population relies on a private vehicle—either as a driver or a passenger—to get to work every single day.</p>
+                                <p style="margin-bottom: 0;">In contrast, the teal squares represent the mere <strong>7 percent</strong> of commuters who utilize our state's trains, trams, and buses. The blue squares highlight the <strong>5 percent</strong> who choose active transport, such as walking or daily cycling. This extreme imbalance highlights a critical challenge for urban planners and policymakers. It proves that simply having public transport infrastructure somewhere in the state does not automatically guarantee widespread adoption. If we are to alleviate crippling road congestion, reduce our collective carbon footprint, and build a more sustainable future, we must understand why so many Victorians still feel that the car is their only viable option for the daily commute across our state.</p>
+                            </div>
+                        </div>
+
+                   
+                    <div class="icon-panel" style="width: 30%; box-sizing: border-box; padding-left: 0;">
+                        
+
+                        <div class="icon-row">
+                            <div class="icon-circle bg-orange"><i class="fa-solid fa-car"></i></div>
+                            <div class="icon-text-group">
+                                <span class="icon-text">Private Vehicle</span>
+                                <span class="icon-subtext">Driver or Passenger</span>
+                            </div>
+                            <span class="icon-stat">88%</span>
+                        </div>
+
+  
+                        <div class="icon-row">
+                            <div class="icon-circle bg-teal" style="display: flex; gap: 4px; font-size: 0.9em;">
+                                <i class="fa-solid fa-train"></i>
+                                <i class="fa-solid fa-bus"></i>
+                            </div>
+                            <div class="icon-text-group">
+                                <span class="icon-text">Public Transport</span>
+                                <span class="icon-subtext">Train, Tram & Bus</span>
+                            </div>
+                            <span class="icon-stat">7%</span>
+                        </div>
+
+
+                        <div class="icon-row">
+                            <div class="icon-circle bg-blue" style="display: flex; gap: 4px; font-size: 0.9em;">
+                                <i class="fa-solid fa-person-walking"></i>
+                                <i class="fa-solid fa-bicycle"></i>
+                            </div>
+                            <div class="icon-text-group">
+                                <span class="icon-text">Active Transport</span>
+                                <span class="icon-subtext">Walking & Cycling</span>
+                            </div>
+                            <span class="icon-stat">5%</span>
+                        </div>
+
+                    </div>
+                </div> 
+
+                </div>
+            </div>
+
+
+            <div class="pure-u-1 pure-u-md-1-2" style="padding-right: 10px; box-sizing: border-box;">
+                            <div class="chart-card">
+                                <h3 class="chart-card-title">Municipality Archetypes</h3>
+                                <p class="insight-text" style="text-align: justify; margin-bottom: 20px;">
+                                    This stacked bar chart breaks down the primary commuting modes across distinct Victorian municipality archetypes, contrasting inner-city hubs with outer-suburban and regional areas. The visual makes it immediately clear that geographic location heavily dictates transport choices. Inner-city residents in Melbourne and Yarra utilize a highly diverse mix of active transport, trams, and trains, reflecting a robust local infrastructure. Conversely, as we move to growth corridors like Casey and Wyndham, or regional centers like Latrobe and Greater Bendigo, the orange "Car, as driver" category overwhelmingly dominates. In these areas, the lack of comprehensive public transit alternatives forces the vast majority of the population into private vehicles, highlighting a stark geographic divide in transit equity and accessibility.
+                                </p>
+                                <div class="vis-container" id="vis-commuter-profile"></div>
+                            </div>
+                        </div>
+
+            <div class="pure-u-1 pure-u-md-1-2" style="padding-left: 10px; box-sizing: border-box;">
+                            <div class="chart-card">
+                                <h3 class="chart-card-title">The Transit Signature</h3>
+                                <p class="insight-text" style="text-align: justify; margin-bottom: 20px;">
+                                    By isolating the data and removing private vehicle usage, this radar chart profiles the specific "transit signature" of commuters who utilize alternative transport across three distinct regions. The shapes immediately reveal the different realities of non-car commuting. Melbourne displays a broad, well-rounded polygon, indicating a balanced reliance on walking, cycling, trams, and trains. Casey's transit profile, however, spikes sharply toward the "Train" axis, demonstrating that outer-suburban commuters who don't drive are almost entirely reliant on the heavy rail network, with very little local bus or active transport integration. Meanwhile, regional hubs like Greater Bendigo show slight leans toward buses and walking but lack the multi-modal options seen in the urban core, emphasizing the fragility of outer-suburban and regional transit ecosystems.
+                                </p>
+                                          
+                                <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; margin-top: 15px;">
+                                    
+                                    
+                                    <div class="vis-container" id="vis-chart-radar" style="width: 55%; justify-content: flex-start;"></div>
+                                    
+                                    
+                                    <div style="width: 40%; box-sizing: border-box; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
+                                        <h4 style="margin-top: 0; margin-bottom: 15px; color: #1e293b; font-size: 0.95em; text-transform: uppercase; letter-spacing: 0.5px;">Shape Reference</h4>
+                                        
+                                        
+                                        <div style="margin-bottom: 14px; display: flex; align-items: flex-start; gap: 10px;">
+                                            <div style="min-width: 12px; height: 12px; background-color: #4ca190; border-radius: 50%; margin-top: 4px;"></div>
+                                            <div>
+                                                <strong style="color: #334155; font-size: 0.9em; display: block;">Melbourne (Green)</strong>
+                                                <span style="font-size: 0.85em; color: #64748b; line-height: 1.3; display: block;">Balanced, multi-modal network.</span>
+                                            </div>
+                                        </div>
+
+                                     
+                                        <div style="margin-bottom: 14px; display: flex; align-items: flex-start; gap: 10px;">
+                                            <div style="min-width: 12px; height: 12px; background-color: #f28e2b; border-radius: 50%; margin-top: 4px;"></div>
+                                            <div>
+                                                <strong style="color: #334155; font-size: 0.9em; display: block;">Casey (Orange)</strong>
+                                                <span style="font-size: 0.85em; color: #64748b; line-height: 1.3; display: block;">Extreme reliance on heavy rail.</span>
+                                            </div>
+                                        </div>
+
+                                      
+                                        <div style="display: flex; align-items: flex-start; gap: 10px;">
+                                            <div style="min-width: 12px; height: 12px; background-color: #4c78a8; border-radius: 50%; margin-top: 4px;"></div>
+                                            <div>
+                                                <strong style="color: #334155; font-size: 0.9em; display: block;">Greater Bendigo (Blue)</strong>
+                                                <span style="font-size: 0.85em; color: #64748b; line-height: 1.3; display: block;">Active transport and Localized bus.</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+
+
+            <div class="pure-u-1" style="padding-top: 10px;">
+                <div class="chart-card">
+                    <h3 class="chart-card-title">Generational Transit Habits</h3>
+                    
+                    
+                    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+                        
+                        
+                        <div class="vis-container" id="vis-age-demographics" style="width: 55%; justify-content: flex-start;"></div>
+                        
+                        
+                        <div style="width: 40%; box-sizing: border-box; padding: 0 15px;">
+                            <p class="insight-text" style="text-align: justify; margin-top: 0;">
+                                This stacked bar chart explores the generational divide in transit usage. By mapping age demographics against primary transport modes, we can identify shifting behaviors across different life stages. Younger cohorts typically show higher rates of public transit and active transport utilization, often driven by proximity to education hubs, urban living, and lower rates of car ownership. 
+                            </p>
+                            <p class="insight-text" style="text-align: justify; margin-bottom: 0; padding-top: 10px;">
+                                In contrast middle-aged and older demographic groups frequently demonstrate a heavier reliance on private vehicles. This shift reflects suburban living patterns, the complex logistics of family transport and differing baseline accessibility needs. Understanding these generational trends is vital for forecasting future network demand as the state's population structure evolves over time.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+<div class="pure-u-1" style="padding: 0 10px; box-sizing: border-box; margin-top: 10px;">
+                <div class="chart-card" style="height: auto;">
+                    <h3 class="chart-card-title">Key Insight: The Geography of Choice</h3>
+                    <p class="insight-text" style="margin-bottom: 0;">
+                        Section 2 reveals that our state's 88% reliance on private vehicles is not simply a matter of commuter preference, but a direct consequence of geographic inequality. The data exposes a stark divide: inner-city residents benefit from a robust, multi-modal transit ecosystem that seamlessly integrates trams, trains, and active transport. In contrast, populations in outer-suburban growth corridors and regional hubs face a forced dependency on the automobile. Furthermore, generational trends show younger cohorts favoring public and active transit, whereas older demographics remain heavily dependent on private vehicles. For the minority in these outer suburbs who do utilize public transport, their "transit signature" is highly fragile often limited to a single mode like heavy rail with virtually no local bus or active transport connections to support their full journey. This infrastructure gap dictates lifestyle and limits accessibility. To meaningfully reduce road congestion and build sustainable communities future urban planning must prioritize creating localized interconnected transit networks in our rapidly expanding outer suburbs, rather than merely funneling commuters into the city center.
+                    </p>
+                </div>
+            </div>
+
+
+        </div> 
+    </div>
+
+
+
+    <div class="pure-u-1 section-container bg-medium-blue">
+        <div class="pure-g"> 
+
+
+            <div class="pure-u-1 section-banner">
+                <h2>Section 3: The Accessibility Gap</h2>
+                <p>Analyzing the relationship between community wealth, service frequency, and time penalties</p>
+            </div>
+
+
+            <div class="pure-u-1 pure-u-md-1-2" style="padding-right: 10px; box-sizing: border-box;">
+                <div class="chart-card">
+                    <h3 class="chart-card-title">Income vs. Infrastructure</h3>
+                    <p class="insight-text" style="text-align: justify; margin-bottom: 20px;">
+                        This scatter plot visualizes the complex and often counterintuitive relationship between community wealth, represented by median weekly income and the raw volume of public transport infrastructure. Inner-city municipalities like Melbourne and Yarra cluster on the right side of the x-axis boasting high median incomes and maintaining a highly effective baseline of transit services. Interestingly, outer-suburban growth corridors such as Casey and Wyndham display significantly lower median incomes but possess the highest absolute number of transport stops. However, this raw volume often represents sprawling, infrequent suburban bus networks rather than efficient, high-capacity rail lines. Meanwhile, regional centers like Latrobe and Greater Bendigo sit lower on both the economic and infrastructure scales. The data suggests that true accessibility is not merely about having the most transit stops; it is about the density and frequency of those services. Wealthier urban cores achieve vastly superior transit outcomes through concentrated, high-frequency networks, while working-class outer suburbs must navigate a high volume of inefficient, disconnected stops.
+                    </p>
+                    <div class="vis-container" id="vis-accessibility-gap"></div>
+                </div>
+            </div>
+
+            <div class="pure-u-1 pure-u-md-1-2" style="padding-left: 10px; box-sizing: border-box;">
+                <div class="chart-card">
+                    <h3 class="chart-card-title">The Time Penalty</h3>
+                    <p class="insight-text" style="text-align: justify; margin-bottom: 20px;">
+                        This box plot exposes the severe "time penalty" inflicted on commuters living outside the immediate urban core, effectively quantifying the unpredictability of their daily travel. Inner-city municipalities represented by Melbourne and Port Phillip feature distinctly narrow boxes and short whiskers. This demonstrates that these residents enjoy not only significantly shorter average commutes, but remarkably consistent and reliable travel times. In stark contrast, outer-suburban growth corridors such as Wyndham and Casey exhibit massively elongated whiskers and wide interquartile ranges, with maximum commute times stretching well past the two-hour mark. This massive variance highlights the fragility of the suburban commute. When a train line experiences a fault or arterial roads become gridlocked, outer-suburban residents suffer disproportionately massive delays. They are penalized with hundreds of hours of lost personal time each year simply due to their geographic location and their reliance on long-distance, highly vulnerable transit links that lack the redundancy of the inner-city network.
+                    </p>
+                    <div class="vis-container" id="vis-commute-times"></div>
+                </div>
+            </div>
+
+
+            <div class="pure-u-1" style="padding: 0 10px; box-sizing: border-box; margin-top: 10px;">
+                <div class="chart-card" style="height: auto;">
+                    <h3 class="chart-card-title">Key Insight: The Cost of Inequity</h3>
+                    <p class="insight-text" style="margin-bottom: 0; text-align: justify;">
+                        Section 3 exposes the profound inequality embedded in Victoria's transit infrastructure. Accessibility is not merely a matter of geographic distance; it is deeply intertwined with systemic urban planning and infrastructure investment. Wealthier, inner-city municipalities benefit from concentrated, high-frequency transit networks that guarantee rapid and reliable commutes. In stark contrast, rapidly growing outer suburbs might possess a high raw number of transit stops, but these typically represent sprawling, inefficient, and highly vulnerable bus connections rather than robust heavy rail lines. The resulting "time penalty" forces outer-suburban residents to surrender hundreds of hours of personal time to long, unpredictable journeys that are heavily susceptible to delays. This inequity demonstrates that simply adding more stops to the urban fringe is fundamentally insufficient. True transit equity requires dedicated investment in the quality, frequency, and resilience of high-capacity services in growth corridors, ensuring that reliable mobility is a baseline standard for all Victorians, rather than a premium amenity reserved for the urban core.
+                    </p>
+                </div>
+            </div>
+  
+
+        </div> 
+    </div>
+
+
+
+            <div class="pure-u-1 section-banner">
+                <h2>Section 4: Network Demand & Utilization</h2>
+                <p>Tracking historical shifts and critical chokepoints in the Victorian network</p>
+            </div>
+
+
+            <div class="pure-u-1">
+                <div class="chart-card">
+                    <h3 class="chart-card-title">Passenger Demand by Mode</h3>
+                    <p class="insight-text">By filtering between weekdays and weekends, we can instantly see the commuter 'heartbeat' of the city, with trains and trams bearing the absolute brunt of the traditional 9-to-5 rush.</p>
+                    
+
+                    <div style="display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; margin-top: 20px;">
+                        
+                        
+                        <div class="vis-container" id="vis-passenger-volume" style="width: 60%; justify-content: flex-start;"></div>
+                        
+                        
+                        <div style="width: 38%; box-sizing: border-box;">
+                            <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px; font-size: 0.95em; line-height: 1.6; color: #475569; text-align: justify; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
+                                <h4 style="margin-top: 0; margin-bottom: 15px; color: #1e293b; font-size: 1.05em;">The Post-Pandemic Heartbeat</h4>
+                                <p style="margin-bottom: 0;">This line chart tracks average daily passenger volumes across trains, trams, and buses over several years. The data clearly illustrates the immense load borne by the heavy rail network prior to the pandemic, consistently peaking near one million daily passengers during traditional weekday commutes. The sharp synchronized plunges perfectly map the state's lockdown periods, where mobility cratered universally. Interestingly, the post-recovery phase reveals a flatter more variable 'heartbeat'. Train usage while still the dominant mode has not fully reclaimed its pre-pandemic peaks suggesting a structural shift in hybrid working arrangements. Meanwhile, bus and tram patronages show a steadier, albeit lower baseline of essential movement, highlighting how different transit modes recovered at entirely different trajectories as the state adapted to a new normal.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="pure-u-1">
+                <div class="chart-card">
+                    <h3 class="chart-card-title">Macro Network Utilization (2018-2026)</h3>
+                    <p class="insight-text">This visual captures the cratering of public transport during lockdowns. The red annotations map out major infrastructure injections showing when the state stepped in to relieve pressure.</p>
+                    
+                    
+                    <div style="display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; margin-top: 20px;">
+                        
+                        
+                        <div class="vis-container" id="vis-total-utilization" style="width: 60%; justify-content: flex-start;"></div>
+                        
+                        
+                        <div style="width: 38%; box-sizing: border-box;">
+                            <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px; font-size: 0.95em; line-height: 1.6; color: #475569; text-align: justify; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
+                                <h4 style="margin-top: 0; margin-bottom: 15px; color: #1e293b; font-size: 1.05em;">Infrastructure as Intervention</h4>
+                                <p style="margin-bottom: 0;">The macro area chart provides a stark, overarching view of Victoria's total public transport aggregate patronage from 2018 through 2026. The visual is dominated by the dramatic "cratering" effect of the pandemic, wiping out millions of aggregate trips almost overnight. However, the most critical story is told by the red annotations marking major state infrastructure injections, such as the Mernda Extension, the Ballarat Upgrade, and the Metro Tunnel. These annotations contextualize the peaks and valleys, showing how strategic network expansions are deployed to stimulate recovery and relieve chronic capacity constraints. The jagged post-pandemic recovery curve indicates a highly volatile return to public transport, heavily influenced by changing commuter habits and the gradual stabilization of the network following massive state interventions designed to future-proof the transit ecosystem.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="pure-u-1" style="padding: 0 10px; box-sizing: border-box; margin-top: 10px;">
+                <div class="chart-card" style="height: auto;">
+                    <h3 class="chart-card-title">Key Insight: A Network in Transition</h3>
+                    <p class="insight-text" style="margin-bottom: 0; text-align: justify;">
+                        To synthesize the findings of Section 4, the data proves that Victoria's transit network has undergone a profound structural transformation over the last decade. We are no longer looking at the predictable, hyper-concentrated 9-to-5 daily grind that defined the pre-pandemic era. While the network volume has largely recovered, the nature of the demand has shifted, with hybrid work permanently flattening the traditional commuter peaks especially on the heavy rail network. The strategic infrastructure upgrades mapped against our macro utilization prove that state interventions are crucial not just for expanding capacity, but for restoring public confidence and facilitating mobility recovery. This section highlights a network in transition—moving away from a fragile system highly susceptible to single points of failure, toward a more resilient, dynamic ecosystem that must now adapt to a fundamentally altered commuter baseline.
+                    </p>
+                </div>
+            </div>
+            
+
+
+    <div class="pure-u-1 section-container bg-dark-navy">
+        <div class="pure-g"> 
+
+            
+            <div class="pure-u-1 section-banner"> 
+                <h2>Section 5: The Road Ahead: Summary & Insight</h2>
+                <p>Victoria's transit network is robust at its core but fragile at its edges.</p>
+            </div>
+
+            
+            <div class="pure-u-1 pure-u-md-1-2" style="padding-right: 10px; box-sizing: border-box;">
+                <div class="chart-card">
+                    <h3 class="chart-card-title">The Network Chokepoints</h3>
+                    <p class="insight-text">Flinders Street and Southern Cross absolutely dwarf the rest of the network, proving the inner city bears the absolute maximum load of state-wide convergence.</p>
+                    <div class="vis-container" id="vis-commuter-flow"></div>
+                </div>
+            </div>
+
+            <div class="pure-u-1 pure-u-md-1-2" style="padding-left: 10px; box-sizing: border-box;">
+                <div class="chart-card">
+                    <h3 class="chart-card-title">The Mode Shift</h3>
+                    <p class="insight-text">During the strictest lockdowns, localized bus travel briefly overtook trams in total patronage rank, serving as a critical frontline lifeline for essential workers when the city core emptied out.</p>
+                    <div class="vis-container" id="vis-bump-chart"></div>
+                </div>
+            </div>
+
+        </div> 
+    </div>
+
+<div class="pure-u-1" style="padding: 0 10px; box-sizing: border-box; margin-top: 10px;">
+                <div class="chart-card" style="height: auto;">
+                    <h3 class="chart-card-title">Conclusion: The Decentralized Future</h3>
+                    <p class="insight-text" style="margin-bottom: 0; text-align: justify;">
+                        To conclude our analysis, Section 5 synthesizes the overarching vulnerabilities and hidden strengths within Victoria's public transport network. The data reveals a system that is robust at its core, yet structurally fragile at its edges. Looking at the network chokepoints, the immense volume handled by Flinders Street, Southern Cross, and Melbourne Central exposes the limitations of a strictly radial transit model. Because the infrastructure is overwhelmingly designed to funnel statewide commuters into a highly concentrated urban center, these central hubs become massive single points of failure. However, the pandemic mode shift chart offers a vital blueprint for the future. When the urban core emptied out, the traditional transport hierarchy was upended. Localized bus networks briefly overtook trams, proving to be the critical, decentralized lifeline that kept essential suburban movement alive. The road ahead requires learning from this anomaly. To build a truly resilient and equitable Victoria, urban planning must evolve beyond simply expanding capacity at inner-city chokepoints. The future demands significant investment in decentralized, cross-suburban transit webs transforming isolated growth corridors into connected communities and ensuring localized mobility is accessible to all Victorians.
+                    </p>
+                </div>
+            </div>
+</div> 
+
+<div style="background-color: #0f172a; color: #cbd5e1; padding: 50px 20px; margin-top: 50px; font-size: 0.9em; box-sizing: border-box; width: 100%;">
+    <div style="max-width: 1200px; margin: 0 auto;">
+        
+        <h3 style="color: #ffffff; border-bottom: 1px solid #334155; padding-bottom: 10px; margin-bottom: 20px; font-size: 1.2em; text-transform: uppercase; letter-spacing: 1px;">
+            Data Sources & References
+        </h3>
+        
+        <ul style="line-height: 1.8; padding-left: 20px; margin-bottom: 30px;">
+            <li><strong>Map 1 (Public Transport Density):</strong> 
+                <a href="https://opendata.transport.vic.gov.au/dataset/public-transport-lines-and-stops/resource/a2cba0b0-bddc-4b87-b495-2b6b7013af6e" target="_blank" style="color: #94a3b8; text-decoration: none; border-bottom: 1px dotted #64748b;">Public Transport Lines and Stops (Dept of Transport)</a> and 
+                <a href="https://discover.data.vic.gov.au/dataset/vicmap-lite-local-government-area-lga-polygon-1-250000-to-1-5000000" target="_blank" style="color: #94a3b8; text-decoration: none; border-bottom: 1px dotted #64748b;">Vicmap Lite LGA Polygons (Data.Vic)</a>.
+            </li>
+            
+            <li><strong>Map 2 (Population Density):</strong> 
+                <a href="https://www.abs.gov.au/statistics/people/population/regional-population/2024-25#data-downloads" target="_blank" style="color: #94a3b8; text-decoration: none; border-bottom: 1px dotted #64748b;">Regional Population 2024-25</a> via the Australian Bureau of Statistics (ABS).
+            </li>
+            
+            <li><strong>Chart 3 (Commuter Breakdown):</strong> 
+                <a href="https://www.abs.gov.au/microdata-tablebuilder" target="_blank" style="color: #94a3b8; text-decoration: none; border-bottom: 1px dotted #64748b;">ABS TableBuilder</a> Combined dataset from Main Statistical Area Structure (Main ASGS) (UR) and MTW06P Method of Travel to Work (6 travel modes).
+            </li>
+
+            <li><strong>Charts 4 & 5 (Archetypes & Transit Signature):</strong> 
+                <a href="https://www.abs.gov.au/microdata-tablebuilder" target="_blank" style="color: #94a3b8; text-decoration: none; border-bottom: 1px dotted #64748b;">ABS TableBuilder</a> Combined dataset from Local Government Areas (2022 Boundaries) (UR) and MTW15P Method of Travel to Work (15 travel modes).
+            </li>
+
+            <li><strong>Chart 6 (Age Demographics):</strong> 
+                <a href="https://www.abs.gov.au/microdata-tablebuilder" target="_blank" style="color: #94a3b8; text-decoration: none; border-bottom: 1px dotted #64748b;">ABS TableBuilder</a> AGE10P (Age in Ten Year Groups) and MTW06 Method of Travel to Work (6 travel modes).
+            </li>
+
+            <li><strong>Chart 7 (Income vs. Infrastructure):</strong> 
+                <a href="https://www.abs.gov.au/census/find-census-data/datapacks?release=2021&product=GCP&geography=LGA&header=S" target="_blank" style="color: #94a3b8; text-decoration: none; border-bottom: 1px dotted #64748b;">2021 General Community Profile for Local Government Areas (LGA)</a> via ABS DataPacks.
+            </li>
+
+            <li><strong>Charts 8, 10 & 12 (Network Demand & Mode Shift):</strong> 
+                <a href="https://discover.data.vic.gov.au/dataset/monthly-average-patronage-by-day-type-and-by-mode" target="_blank" style="color: #94a3b8; text-decoration: none; border-bottom: 1px dotted #64748b;">Monthly average patronage by day type and by mode</a> via Data.Vic.
+            </li>
+
+            <li><strong>Chart 9 (The Time Penalty):</strong> 
+                <a href="https://opendata.transport.vic.gov.au/dataset/victorian-integrated-survey-of-travel-and-activity-vista/resource/780de9c1-0e12-4f6f-93d4-a1d0e3c8d0cc" target="_blank" style="color: #94a3b8; text-decoration: none; border-bottom: 1px dotted #64748b;">Journey to Work 2024-2025 (VISTA)</a> via the Department of Transport and Planning.
+            </li>
+
+            <li><strong>Chart 11 (The Network Chokepoints):</strong> 
+                <a href="https://discover.data.vic.gov.au/dataset/annual-metropolitan-train-station-patronage-station-entries" target="_blank" style="color: #94a3b8; text-decoration: none; border-bottom: 1px dotted #64748b;">Annual metropolitan train station patronage (station entries) 2024-2025</a> via Data.Vic.
+            </li>
+        </ul>
+        
+        <div style="text-align: center; color: #64748b; font-size: 0.85em; border-top: 1px solid #1e293b; padding-top: 20px; margin-top: 20px;">
+            <p style="margin: 0;">
+                Visualizations rendered via <a href="https://vega.github.io/vega-lite/" target="_blank" style="color: #94a3b8; text-decoration: none;">Vega-Lite</a>. Icons provided by <a href="https://fontawesome.com/" target="_blank" style="color: #94a3b8; text-decoration: none;">FontAwesome</a>.
+            </p>
+        </div>
+
+    </div>
+</div>
+<script src="js/script.js"></script>
+</body>
+</html>

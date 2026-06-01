@@ -1,0 +1,93 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "The Time Penalty: Commute Variance by LGA",
+    "fontSize": 16,
+    "anchor": "middle",
+    "offset": 20
+  },
+  "width": 650,
+  "height": 350,
+  "data": {
+    "url": "data/chart9_commute_times.csv",
+    "format": {"parse": {"Commute Time (mins)": "number"}}
+  },
+  "transform": [
+    {
+      "calculate": "datum.LGA == 'Melbourne' || datum.LGA == 'Port Phillip' ? 'Inner-City' : datum.LGA == 'Casey' || datum.LGA == 'Wyndham' ? 'Outer-Suburban' : 'Regional Centers'",
+      "as": "Archetype"
+    }
+  ],
+  "layer": [
+    {
+      "mark": {
+        "type": "boxplot",
+        "extent": "min-max",
+        "size": 35,
+        "median": {"color": "white", "strokeWidth": 2},
+        "ticks": true,
+        "opacity": 0.8
+      },
+      "encoding": {
+        "x": {
+          "field": "Commute Time (mins)",
+          "type": "quantitative",
+          "title": "Commute Time (Minutes)",
+          "axis": {"grid": true, "labelFontSize": 12, "titleFontSize": 13}
+        },
+        "y": {
+          "field": "LGA",
+          "type": "nominal",
+          "title": "Municipality",
+          "sort": {"op": "mean", "field": "Commute Time (mins)", "order": "descending"},
+          "axis": {"labelFontSize": 13, "titleFontSize": 13, "labelPadding": 10}
+        },
+        "color": {
+          "field": "Archetype",
+          "type": "nominal",
+          "scale": {
+            "domain": ["Inner-City", "Outer-Suburban", "Regional Centers"],
+            "range": ["#27ae60", "#d35400", "#2980b9"]
+          },
+          "legend": {
+            "title": "LGA Category",
+            "orient": "bottom"
+          }
+        },
+        "tooltip": [
+          {"field": "LGA", "type": "nominal", "title": "Municipality"},
+          {"field": "Archetype", "type": "nominal", "title": "Category"}
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "point",
+        "color": "#e74c3c",
+        "shape": "diamond",
+        "size": 150,
+        "filled": true,
+        "opacity": 1
+      },
+      "encoding": {
+        "x": {
+          "aggregate": "mean",
+          "field": "Commute Time (mins)",
+          "type": "quantitative"
+        },
+        "y": {
+          "field": "LGA",
+          "type": "nominal",
+          "sort": {"op": "mean", "field": "Commute Time (mins)", "order": "descending"}
+        },
+        "tooltip": [
+          {"field": "LGA", "type": "nominal", "title": "Municipality"},
+          {"aggregate": "mean", "field": "Commute Time (mins)", "type": "quantitative", "title": "Average Commute (mins)", "format": ".1f"}
+        ]
+      }
+    }
+  ],
+  "config": {
+    "view": {"stroke": "transparent"}
+  }
+}

@@ -1,0 +1,122 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Accessibility Gap: LGA Income vs. Public Transport Infrastructure",
+    "fontSize": 16,
+    "anchor": "middle",
+    "offset": 20
+  },
+  "width": 500,
+  "height": 450,
+  "data": {
+    "url": "data/lga_income_clean.csv",
+    "format": {"parse": {"Median Weekly Income": "number"}}
+  },
+  "transform": [
+    {
+      "calculate": "upper(replace(replace(datum.LGA, ' (Vic.)', ''), ' (C)', ''))",
+      "as": "LGA_UPPER"
+    },
+    {
+      "lookup": "LGA_UPPER",
+      "from": {
+        "data": {
+          "url": "data/lga_transport_density.csv",
+          "format": {"parse": {"stop_count": "number"}}
+        },
+        "key": "LGA_NAME",
+        "fields": ["stop_count"]
+      }
+    },
+    {
+      "filter": "datum.stop_count != null && datum['Median Weekly Income'] != null"
+    },
+    {
+      "calculate": "indexof(['Melbourne', 'Yarra', 'Port Phillip', 'Stonnington', 'Boroondara', 'Maribyrnong', 'Darebin', 'Moonee Valley', 'Glen Eira', 'Merri-bek', 'Moreland', 'Bayside', 'Hobsons Bay'], datum.LGA) >= 0 ? 'Inner-City' : indexof(['Casey', 'Wyndham', 'Hume', 'Melton', 'Whittlesea', 'Cardinia', 'Frankston', 'Greater Dandenong', 'Brimbank', 'Monash', 'Knox', 'Maroondah', 'Whitehorse', 'Banyule', 'Manningham', 'Kingston', 'Nillumbik', 'Mornington Peninsula', 'Yarra Ranges'], datum.LGA) >= 0 ? 'Outer-Suburban' : 'Regional Centers'",
+      "as": "Archetype"
+    },
+    {
+      "calculate": "indexof(['Melbourne', 'Yarra', 'Wyndham', 'Casey', 'Greater Bendigo'], datum.LGA) >= 0 || indexof(datum.LGA, 'Latrobe') >= 0",
+      "as": "IsHighlighted"
+    }
+  ],
+  "layer": [
+    {
+      "mark": {
+        "type": "circle",
+        "stroke": "white",
+        "strokeWidth": 1
+      },
+      "encoding": {
+        "x": {
+          "field": "Median Weekly Income",
+          "type": "quantitative",
+          "title": "Median Weekly Income ($)",
+          "scale": {"zero": false},
+          "axis": {"labelFontSize": 12, "titleFontSize": 13, "grid": false}
+        },
+        "y": {
+          "field": "stop_count",
+          "type": "quantitative",
+          "title": "Total Transport Stops/Services",
+          "axis": {"labelFontSize": 12, "titleFontSize": 13}
+        },
+        "color": {
+          "field": "Archetype",
+          "type": "nominal",
+          "scale": {
+            "domain": ["Inner-City", "Outer-Suburban", "Regional Centers"],
+            "range": ["#27ae60", "#d35400", "#2980b9"]
+          },
+          "legend": {
+            "title": "LGA Category",
+            "orient": "bottom"
+          }
+        },
+        "opacity": {
+          "condition": {"test": "datum.IsHighlighted", "value": 1},
+          "value": 0.25
+        },
+        "size": {
+          "condition": {"test": "datum.IsHighlighted", "value": 130},
+          "value": 60
+        },
+        "order": {
+          "condition": {"test": "datum.IsHighlighted", "value": 1},
+          "value": 0
+        },
+        "tooltip": [
+          {"field": "LGA", "type": "nominal", "title": "Municipality"},
+          {"field": "Archetype", "type": "nominal", "title": "Category"},
+          {"field": "Median Weekly Income", "type": "quantitative", "title": "Median Income", "format": "$,.0f"},
+          {"field": "stop_count", "type": "quantitative", "title": "Transport Stops", "format": ","}
+        ]
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.IsHighlighted"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "baseline": "middle",
+        "dx": 12,
+        "dy": -5,
+        "fontSize": 13,
+        "fontWeight": "bold",
+        "color": "#2c3e50"
+      },
+      "encoding": {
+        "x": {"field": "Median Weekly Income", "type": "quantitative"},
+        "y": {"field": "stop_count", "type": "quantitative"},
+        "text": {"field": "LGA", "type": "nominal"}
+      }
+    }
+  ],
+  "config": {
+    "view": {"stroke": "transparent"}
+  }
+}

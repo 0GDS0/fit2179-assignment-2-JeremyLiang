@@ -1,0 +1,82 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": "Commuter Transport Mode by Age Group",
+  "width": 650,
+  "height": 350,
+  "data": {
+    "url": "data/commuter_age_demographics.csv",
+    "format": {
+      "parse": {
+        "Vehicle": "number",
+        "Public Transport": "number",
+        "Active Transport": "number",
+        "Total": "number"
+      }
+    }
+  },
+  "transform": [
+    {
+      "fold": ["Vehicle", "Public Transport", "Active Transport"],
+      "as": ["Mode", "Commuters"]
+    },
+    {
+      "calculate": "datum.Commuters / datum.Total",
+      "as": "Percentage"
+    },
+    {
+      "calculate": "datum.Mode === 'Vehicle' ? 1 : datum.Mode === 'Public Transport' ? 2 : 3",
+      "as": "StackOrder"
+    }
+  ],
+  "mark": {
+    "type": "bar",
+    "stroke": "white",
+    "strokeWidth": 1
+  },
+  "encoding": {
+    "y": {
+      "field": "Age Group",
+      "type": "ordinal",
+      "title": "Age Group",
+      "axis": {
+        "labelFontSize": 12,
+        "labelFontWeight": "bold"
+      }
+    },
+    "x": {
+      "field": "Commuters",
+      "type": "quantitative",
+      "stack": "normalize",
+      "title": "Proportion of Commuters",
+      "axis": {
+        "format": "%",
+        "labelFontSize": 11
+      }
+    },
+    "color": {
+      "field": "Mode",
+      "type": "nominal",
+      "scale": {
+        "domain": ["Vehicle", "Public Transport", "Active Transport"],
+        "range": ["#e67e22", "#1abc9c", "#3498db"]
+      },
+      "legend": {
+        "title": "Transport Mode",
+        "orient": "bottom"
+      }
+    },
+    "order": {
+      "field": "StackOrder",
+      "type": "quantitative"
+    },
+    "tooltip": [
+      {"field": "Age Group", "type": "nominal", "title": "Age Group"},
+      {"field": "Mode", "type": "nominal", "title": "Mode"},
+      {"field": "Commuters", "type": "quantitative", "format": ","},
+      {"field": "Percentage", "type": "quantitative", "format": ".1%"}
+    ]
+  },
+  "config": {
+    "view": {"stroke": "transparent"}
+  }
+}

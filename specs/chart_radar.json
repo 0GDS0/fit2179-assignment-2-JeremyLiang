@@ -1,0 +1,156 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": "Public & Active Transit Profiles (Non-Car Usage Breakdown)",
+  "width": 350,
+  "height": 350,
+  "data": {
+    "url": "data/lga_commuter_modes.csv",
+    "format": {
+      "parse": {
+        "Train": "number",
+        "Bus": "number",
+        "Tram/light rail": "number",
+        "Bicycle": "number",
+        "Walked only": "number"
+      }
+    }
+  },
+  "transform": [
+    {
+      "filter": "datum.LGA == 'Melbourne' || datum.LGA == 'Casey' || datum.LGA == 'Greater Bendigo'"
+    },
+    {
+      "calculate": "datum.Train + datum.Bus + datum['Tram/light rail'] + datum.Bicycle + datum['Walked only']",
+      "as": "NonCarTotal"
+    },
+    {
+      "fold": ["Train", "Bus", "Tram/light rail", "Bicycle", "Walked only"],
+      "as": ["Mode", "Commuters"]
+    },
+    {
+      "calculate": "datum.Commuters / datum.NonCarTotal",
+      "as": "Percentage"
+    },
+    {
+      "calculate": "datum.Mode === 'Train' ? 0 : datum.Mode === 'Bus' ? 1 : datum.Mode === 'Tram/light rail' ? 2 : datum.Mode === 'Bicycle' ? 3 : 4",
+      "as": "key"
+    },
+    {
+      "calculate": "datum.key * 2 * PI / 5",
+      "as": "angle"
+    },
+    {
+      "calculate": "datum.Percentage * sin(datum.angle)",
+      "as": "x"
+    },
+    {
+      "calculate": "datum.Percentage * cos(datum.angle)",
+      "as": "y"
+    },
+    {
+      "calculate": "0.85 * sin(datum.angle)",
+      "as": "label_x"
+    },
+    {
+      "calculate": "0.85 * cos(datum.angle)",
+      "as": "label_y"
+    }
+  ],
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 0, 
+        "fillOpacity": 0.6
+      },
+      "encoding": {
+        "x": {
+          "field": "x",
+          "type": "quantitative",
+          "scale": {"domain": [-1.2, 1.2]},
+          "axis": null
+        },
+        "y": {
+          "field": "y",
+          "type": "quantitative",
+          "scale": {"domain": [-1.2, 1.2]},
+          "axis": null
+        },
+        "fill": {
+          "field": "LGA",
+          "type": "nominal",
+          "scale": {
+            "domain": ["Melbourne", "Casey", "Greater Bendigo"],
+            "range": ["#2ecc71", "#e67e22", "#3498db"]
+          },
+          "legend": {
+            "title": "Municipality",
+            "orient": "bottom",
+            "symbolType": "square"
+          }
+        },
+        "order": {
+          "field": "key",
+          "type": "quantitative"
+        },
+        "tooltip": [
+          {"field": "LGA", "type": "nominal", "title": "Municipality"},
+          {"field": "Mode", "type": "nominal", "title": "Mode"},
+          {"field": "Percentage", "type": "quantitative", "format": ".1%", "title": "Share of Non-Car Transit"}
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "circle",
+        "size": 45,
+        "opacity": 1
+      },
+      "encoding": {
+        "x": {
+          "field": "x",
+          "type": "quantitative",
+          "scale": {"domain": [-1.2, 1.2]},
+          "axis": null
+        },
+        "y": {
+          "field": "y",
+          "type": "quantitative",
+          "scale": {"domain": [-1.2, 1.2]},
+          "axis": null
+        },
+        "color": {
+          "field": "LGA",
+          "type": "nominal",
+          "scale": {
+            "domain": ["Melbourne", "Casey", "Greater Bendigo"],
+            "range": ["#2ecc71", "#e67e22", "#3498db"]
+          },
+          "legend": null
+        },
+        "tooltip": [
+          {"field": "LGA", "type": "nominal", "title": "Municipality"},
+          {"field": "Mode", "type": "nominal", "title": "Mode"},
+          {"field": "Percentage", "type": "quantitative", "format": ".1%", "title": "Share of Non-Car Transit"}
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "align": "center",
+        "baseline": "middle",
+        "fontSize": 12,
+        "fontWeight": "bold"
+      },
+      "encoding": {
+        "x": {"field": "label_x", "type": "quantitative"},
+        "y": {"field": "label_y", "type": "quantitative"},
+        "text": {"field": "Mode", "type": "nominal"}
+      }
+    }
+  ],
+  "config": {
+    "view": {"stroke": "transparent"}
+  }
+}

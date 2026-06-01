@@ -1,0 +1,53 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": "Population Density per LGA (2025)",
+  "width": "container",
+  "height": 550,
+  "padding": 5,
+  "autosize": {
+    "type": "fit",
+    "contains": "padding"
+  },
+  "data": {
+    "url": "data/vic_lgas.json",
+    "format": {
+      "type": "topojson",
+      "feature": "VMLITE_LGA" 
+    }
+  },
+  "transform": [
+    {
+      "lookup": "properties.LGA_NAME", 
+      "from": {
+        "data": {
+          "url": "data/lga_population_density.csv"
+        },
+        "key": "LGA_NAME",
+        "fields": ["Population density 2025"]
+      }
+    }
+  ],
+  "projection": {
+    "type": "mercator"
+  },
+  "mark": {
+    "type": "geoshape",
+    "stroke": "#ffffff",
+    "strokeWidth": 0.5
+  },
+  "encoding": {
+    "color": {
+      "field": "Population density 2025",
+      "type": "quantitative",
+      "scale": {
+        "type": "linear",
+        "scheme": "oranges"
+      },
+      "title": "People per Sq Km"
+    },
+    "tooltip": [
+      {"field": "properties.LGA_NAME", "type": "nominal", "title": "Local Government Area"},
+      {"field": "Population density 2025", "type": "quantitative", "title": "Population Density", "format": ".2f"}
+    ]
+  }
+}

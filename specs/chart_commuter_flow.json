@@ -1,0 +1,68 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Network Load: Top 15 Busiest Transit Hubs",
+    "fontSize": 16,
+    "anchor": "middle",
+    "offset": 20
+  },
+  "width": 300,
+  "height": 450,
+  "data": {
+    "url": "data/chart11_top_stations.csv",
+    "format": {"parse": {"Annual Entries": "number"}}
+  },
+  "encoding": {
+    "y": {
+      "field": "Station Name",
+      "type": "nominal",
+      "title": "Transit Hub",
+      "sort": {"op": "max", "field": "Annual Entries", "order": "descending"},
+      "axis": {"labelFontSize": 13, "titleFontSize": 14, "labelPadding": 10}
+    }
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "rect",
+        "stroke": "white",
+        "strokeWidth": 2
+      },
+      "encoding": {
+        "color": {
+          "field": "Annual Entries",
+          "type": "quantitative",
+          "title": "Annual Entries",
+          "scale": {"scheme": "blues"},
+          "legend": {
+            "orient": "right",
+            "format": ".2s"
+          }
+        },
+        "tooltip": [
+          {"field": "Station Name", "type": "nominal", "title": "Station"},
+          {"field": "Annual Entries", "type": "quantitative", "title": "Total Annual Entries", "format": ","}
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "baseline": "middle",
+        "fontSize": 12,
+        "fontWeight": "bold"
+      },
+      "encoding": {
+        "text": {"field": "Annual Entries", "type": "quantitative", "format": ",.0f"},
+        "color": {
+          "condition": {"test": "datum['Annual Entries'] > 5000000", "value": "white"},
+          "value": "black"
+        }
+      }
+    }
+  ],
+  "config": {
+    "view": {"stroke": "transparent"},
+    "axis": {"grid": false, "domain": false, "ticks": false}
+  }
+}

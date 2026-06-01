@@ -1,0 +1,66 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": "Public Transport Accessibility: Total Stops per LGA",
+  "width": "container",
+  "height": 550,
+  "padding": 5,
+  "autosize": {
+    "type": "fit",
+    "contains": "padding"
+  },
+  "data": {
+    "url": "data/vic_lgas.json",
+    "format": {
+      "type": "topojson",
+      "feature": "VMLITE_LGA" 
+    }
+  },
+  "transform": [
+    {
+      "lookup": "properties.LGA_NAME", 
+      "from": {
+        "data": {
+          "url": "data/lga_transport_density.csv"
+        },
+        "key": "LGA_NAME",
+        "fields": ["stop_count"]
+      }
+    },
+    {
+      "lookup": "properties.LGA_NAME", 
+      "from": {
+        "data": {
+          "url": "data/lga_population_density.csv"
+        },
+        "key": "LGA_NAME",
+        "fields": ["Population density 2025"]
+      }
+    },
+    {
+      "filter": "datum['Population density 2025'] != null"
+    }
+  ],
+  "projection": {
+    "type": "mercator"
+  },
+  "mark": {
+    "type": "geoshape",
+    "stroke": "#ffffff",
+    "strokeWidth": 0.5
+  },
+  "encoding": {
+    "color": {
+      "field": "stop_count",
+      "type": "quantitative",
+      "scale": {
+        "type": "linear",
+        "scheme": "tealblues"
+      },
+      "title": "Total Transport Stops"
+    },
+    "tooltip": [
+      {"field": "properties.LGA_NAME", "type": "nominal", "title": "Local Government Area"},
+      {"field": "stop_count", "type": "quantitative", "title": "Number of Stops"}
+    ]
+  }
+}

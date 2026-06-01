@@ -1,0 +1,102 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "The Mode Shift: Transport Network Hierarchy (2018-2026)",
+    "fontSize": 16,
+    "anchor": "middle",
+    "offset": 20
+  },
+  "width": 700,
+  "height": 250,
+  "data": {
+    "url": "data/monthly_average_patronage_by_day_type_and_by_mode2.csv",
+    "format": {"parse": {"Pax_daily": "number"}}
+  },
+  "transform": [
+    {
+      "calculate": "indexof(datum.Mode, 'Train') >= 0 ? 'Train' : indexof(datum.Mode, 'Bus') >= 0 ? 'Bus' : 'Tram'",
+      "as": "Transport_Mode"
+    },
+    {
+      "aggregate": [{"op": "sum", "field": "Pax_daily", "as": "Total_Pax"}],
+      "groupby": ["Year", "Transport_Mode"]
+    },
+    {
+      "window": [{"op": "rank", "as": "Rank"}],
+      "sort": [{"field": "Total_Pax", "order": "descending"}],
+      "groupby": ["Year"]
+    }
+  ],
+  "encoding": {
+    "x": {
+      "field": "Year",
+      "type": "ordinal",
+      "title": "Timeline (Year)",
+      "axis": {
+        "labelAngle": 0, 
+        "labelFontSize": 13, 
+        "titleFontSize": 14, 
+        "grid": false, 
+        "domain": false, 
+        "ticks": false,
+        "labelPadding": 15
+      }
+    },
+    "y": {
+      "field": "Rank",
+      "type": "quantitative",
+      "title": "Patronage Rank",
+      "scale": {"reverse": true, "domain": [1, 3]},
+      "axis": {
+        "tickMinStep": 1, 
+        "labelFontSize": 13, 
+        "titleFontSize": 14, 
+        "grid": false, 
+        "domain": false, 
+        "ticks": false
+      }
+    },
+    "color": {
+      "field": "Transport_Mode",
+      "type": "nominal",
+      "scale": {
+        "domain": ["Train", "Tram", "Bus"],
+        "range": ["#e67e22", "#1abc9c", "#3498db"]
+      },
+      "legend": {
+        "title": "Transport Mode",
+        "orient": "bottom",
+        "titleFontSize": 13,
+        "labelFontSize": 12
+      }
+    }
+  },
+  "layer": [
+    {
+      "mark": {"type": "line", "size": 6, "interpolate": "monotone"}
+    },
+    {
+      "mark": {"type": "circle", "size": 600, "opacity": 1, "stroke": "white", "strokeWidth": 2}
+    },
+    {
+      "mark": {"type": "text", "baseline": "middle", "fontSize": 14, "fontWeight": "bold", "color": "white"},
+      "encoding": {
+        "text": {"field": "Rank", "type": "quantitative"}
+      }
+    },
+    {
+      "mark": {"type": "point", "size": 600, "opacity": 0, "tooltip": true},
+      "encoding": {
+        "tooltip": [
+          {"field": "Year", "type": "ordinal", "title": "Year"},
+          {"field": "Transport_Mode", "type": "nominal", "title": "Mode"},
+          {"field": "Rank", "type": "quantitative", "title": "Rank position"},
+          {"field": "Total_Pax", "type": "quantitative", "title": "Total Annual Volume", "format": ",.0f"}
+        ]
+      }
+    }
+  ],
+  "config": {
+    "view": {"stroke": "transparent"}
+  }
+}

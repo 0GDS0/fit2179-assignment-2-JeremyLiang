@@ -1,0 +1,64 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": "Commuter Breakdown (Out of 100 People)",
+  "width": 300,
+  "height": 300,
+  "data": {
+    "sequence": {
+      "start": 0,
+      "stop": 100,
+      "as": "index"
+    }
+  },
+  "transform": [
+    {
+      "calculate": "datum.index < 88 ? 'Private Vehicle (88%)' : datum.index < 95 ? 'Public Transport (7%)' : 'Active Transport (5%)'",
+      "as": "Transport Mode"
+    },
+    {
+      "calculate": "floor(datum.index / 10)",
+      "as": "row"
+    },
+    {
+      "calculate": "datum.index % 10",
+      "as": "col"
+    }
+  ],
+  "mark": {
+    "type": "rect",
+    "stroke": "white",
+    "strokeWidth": 2,
+    "cornerRadius": 3
+  },
+  "encoding": {
+    "x": {
+      "field": "col",
+      "type": "ordinal",
+      "axis": null
+    },
+    "y": {
+      "field": "row",
+      "type": "ordinal",
+      "axis": null,
+      "sort": "descending"
+    },
+    "color": {
+      "field": "Transport Mode",
+      "type": "nominal",
+      "scale": {
+        "domain": ["Private Vehicle (88%)", "Public Transport (7%)", "Active Transport (5%)"],
+        "range": ["#e67e22", "#1abc9c", "#3498db"]
+      },
+      "legend": {
+        "orient": "bottom",
+        "title": null
+      }
+    },
+    "tooltip": [
+      {"field": "Transport Mode", "type": "nominal", "title": "Category"}
+    ]
+  },
+  "config": {
+    "view": {"stroke": "transparent"}
+  }
+}

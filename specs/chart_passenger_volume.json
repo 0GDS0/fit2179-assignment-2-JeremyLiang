@@ -1,0 +1,92 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": "Passenger Volume: Public Transport Modes Over Time",
+  "width": 650,
+  "height": 400,
+  "data": {
+    "url": "data/monthly_average_patronage_by_day_type_and_by_mode2.csv",
+    "format": {"parse": {"Pax_daily": "number"}}
+  },
+  "params": [
+    {
+      "name": "DayType_Select",
+      "value": "Normal Weekday",
+      "bind": {
+        "input": "select",
+        "options": ["Normal Weekday", "School Holiday Weekday", "Weekend"],
+        "name": "Select Day Type: "
+      }
+    },
+    {
+      "name": "mode_highlight",
+      "select": {"type": "point", "fields": ["Transport_Mode"]},
+      "bind": "legend"
+    }
+  ],
+  "transform": [
+    {
+      "filter": "datum.Day_type == DayType_Select"
+    },
+    {
+      "calculate": "indexof(datum.Mode, 'Train') >= 0 ? 'Train' : indexof(datum.Mode, 'Bus') >= 0 ? 'Bus' : 'Tram'",
+      "as": "Transport_Mode"
+    },
+    {
+      "calculate": "datetime(datum.Year, datum.Month - 1, 1)",
+      "as": "Date"
+    },
+    {
+      "aggregate": [{"op": "sum", "field": "Pax_daily", "as": "Daily_Total"}],
+      "groupby": ["Date", "Day_of_week", "Transport_Mode"]
+    },
+    {
+      "aggregate": [{"op": "mean", "field": "Daily_Total", "as": "Avg_Daily_Pax"}],
+      "groupby": ["Date", "Transport_Mode"]
+    }
+  ],
+  "mark": {
+    "type": "line",
+    "point": {"size": 40},
+    "strokeWidth": 3
+  },
+  "encoding": {
+    "x": {
+      "field": "Date",
+      "type": "temporal",
+      "title": "Timeline (Year)",
+      "axis": {"grid": false, "labelFontSize": 12, "titleFontSize": 13}
+    },
+    "y": {
+      "field": "Avg_Daily_Pax",
+      "type": "quantitative",
+      "title": "Average Daily Passengers",
+      "axis": {"format": ".2s", "grid": true, "labelFontSize": 11, "titleFontSize": 13}
+    },
+    "color": {
+      "field": "Transport_Mode",
+      "type": "nominal",
+      "scale": {
+        "domain": ["Train", "Tram", "Bus"],
+        "range": ["#e67e22", "#1abc9c", "#3498db"]
+      },
+      "legend": {
+        "title": "Transport Mode",
+        "orient": "bottom",
+        "titleFontSize": 12,
+        "labelFontSize": 12
+      }
+    },
+    "opacity": {
+      "condition": {"param": "mode_highlight", "value": 1},
+      "value": 0.2
+    },
+    "tooltip": [
+      {"field": "Date", "type": "temporal", "timeUnit": "yearmonth", "title": "Month"},
+      {"field": "Transport_Mode", "type": "nominal", "title": "Mode"},
+      {"field": "Avg_Daily_Pax", "type": "quantitative", "title": "Average Daily Pax", "format": ",.0f"}
+    ]
+  },
+  "config": {
+    "view": {"stroke": "transparent"}
+  }
+}

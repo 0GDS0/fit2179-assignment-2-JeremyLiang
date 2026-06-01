@@ -1,0 +1,75 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": "Commuter Transport Modes by Municipality Archetype",
+  "width": 650,
+  "height": 350,
+  "data": {
+    "url": "data/lga_commuter_modes.csv"
+  },
+  "transform": [
+    {
+      "fold": ["Car, as driver", "Train", "Tram/light rail", "Bus", "Bicycle", "Walked only"],
+      "as": ["Mode", "Commuters"]
+    },
+    {
+      "calculate": "datum.Commuters / datum.Total",
+      "as": "Percentage"
+    },
+    {
+      "calculate": "datum.Mode === 'Car, as driver' ? 1 : datum.Mode === 'Train' ? 2 : datum.Mode === 'Tram/light rail' ? 3 : datum.Mode === 'Bus' ? 4 : datum.Mode === 'Bicycle' ? 5 : 6",
+      "as": "StackOrder"
+    }
+  ],
+  "mark": {
+    "type": "bar", 
+    "stroke": "white", 
+    "strokeWidth": 1
+  },
+  "encoding": {
+    "y": {
+      "field": "LGA",
+      "type": "nominal",
+      "title": null,
+      "sort": ["Latrobe (Vic.)", "Casey", "Greater Bendigo", "Wyndham", "Yarra", "Melbourne"],
+      "axis": {
+        "labelFontSize": 12,
+        "labelFontWeight": "bold"
+      }
+    },
+    "x": {
+      "field": "Commuters",
+      "type": "quantitative",
+      "stack": "normalize",
+      "title": "Proportion of Commuters",
+      "axis": {
+        "format": "%",
+        "labelFontSize": 11
+      }
+    },
+    "color": {
+      "field": "Mode",
+      "type": "nominal",
+      "scale": {
+        "domain": ["Car, as driver", "Train", "Tram/light rail", "Bus", "Bicycle", "Walked only"],
+        "range": ["#e67e22", "#2980b9", "#8e44ad", "#e74c3c", "#196F3D", "#2ecc71"]
+      },
+      "legend": {
+        "title": "Transport Mode",
+        "orient": "bottom"
+      }
+    },
+    "order": {
+      "field": "StackOrder",
+      "type": "quantitative"
+    },
+    "tooltip": [
+      {"field": "LGA", "type": "nominal", "title": "Municipality"},
+      {"field": "Mode", "type": "nominal", "title": "Mode"},
+      {"field": "Commuters", "type": "quantitative", "format": ","},
+      {"field": "Percentage", "type": "quantitative", "format": ".1%"}
+    ]
+  },
+  "config": {
+    "view": {"stroke": "transparent"}
+  }
+}
